@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the phpstorm_features feature.
+ */
+
+include_once 'phpstorm_features.features.inc';

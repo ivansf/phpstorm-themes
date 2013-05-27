@@ -1,0 +1,19 @@
+/*
+.DS_Store
+!.gitignore
+!README.md
+!sites/
+sites/*
+!sites/all/
+sites/all/*
+
+# We ignore everything except what we list below
+!sites/all/modules/
+sites/all/modules/*
+!sites/all/themes/
+sites/all/themes/*
+
+# Now we manually include what we need.
+!sites/all/modules/phpstorm_features/
+!sites/all/modules/phpstormthemes/
+!sites/all/themes/phpstorm_themes/

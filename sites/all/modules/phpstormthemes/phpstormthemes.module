@@ -1,0 +1,89 @@
+<?php
+
+// Implements hook_menu
+function phpstormthemes_menu() {
+
+	$items['upload'] = array(
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('phpstormthemes_upload'),
+		'page title' => 'asdsad',
+		'access callback' => TRUE,
+		'type' => MENU_CALLBACK,
+	);
+	return $items;
+}
+
+function phpstormthemes_upload() {
+
+	$form = array();
+
+	$form['fieldset'] = array(
+		'#type' => 'fieldset',
+		'#collapsible' => FALSE,
+		'#title' => 'Upload',
+		'#prefix' => '<div class="row-fluid"><div class="span6">',
+		'#suffix' => '</div>'
+	);
+	$form['fieldset']['instructions'] = array(
+		'#type' => 'markup',
+		'#markup' => 'Please submit your themes in XML or ICLS format and properly named. I’ve received too many .jar files with around 20 themes inside and none of them have the name of the theme submitted. Thanks!'
+	);
+	$form['fieldset']['author'] = array(
+		'#type' => 'textfield',
+		'#title' => "Author's Name",
+		'#description' => 'The theme file in ICLS or XML format'
+	);
+	$form['fieldset']['author_url'] = array(
+		'#type' => 'textfield',
+		'#title' => "Author's Website",
+		'#description' => 'The theme file in ICLS or XML format'
+	);
+	$form['fieldset']['description'] = array(
+		'#type' => 'textarea',
+		'#title' => "Description",
+		'#description' => 'A brief description of your theme.t'
+	);
+
+	$form['fieldset2'] = array(
+		'#type' => 'fieldset',
+		'#collapsible' => FALSE,
+		'#title' => 'Files',
+		'#prefix' => '<div class="span6">',
+		'#suffix' => '</div></div>'
+	);
+	$form['fieldset2']['file'] = array(
+		'#type' => 'file',
+		'#title' => 'Theme File',
+		'#name' => 'theme_file',
+		'#description' => 'The theme file in ICLS or XML format'
+	);
+	$form['fieldset2']['screen1'] = array(
+		'#type' => 'file',
+		'#title' => 'Screenshot #1',
+		'#description' => 'The theme file in ICLS or XML format'
+	);
+	$form['fieldset2']['screen2'] = array(
+		'#type' => 'file',
+		'#title' => 'Screenshot #2',
+		'#description' => 'The theme file in ICLS or XML format'
+	);
+	$form['fieldset2']['screen3'] = array(
+		'#type' => 'file',
+		'#title' => 'Screenshot #3',
+		'#description' => 'The theme file in ICLS or XML format'
+	);
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => 'Submit Theme'
+	);
+	return $form;
+
+}
+
+function phpstormthemes_upload_validate($form, &$form_state) {
+	form_set_error('screen2', t('No file was uploaded.'));
+}
+
+function phpstormthemes_upload_submit($form, &$form_state) {
+
+}
