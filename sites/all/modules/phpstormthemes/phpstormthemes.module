@@ -13,20 +13,30 @@ function phpstormthemes_menu() {
 	return $items;
 }
 
+// Implements hook_form()
 function phpstormthemes_upload() {
 
 	$form = array();
+//	$form['#attributes'] = array('enctype' => "multipart/form-data");
 
 	$form['fieldset'] = array(
 		'#type' => 'fieldset',
 		'#collapsible' => FALSE,
-		'#title' => 'Upload',
+		'#title' => 'Theme Description',
 		'#prefix' => '<div class="row-fluid"><div class="span6">',
 		'#suffix' => '</div>'
 	);
 	$form['fieldset']['instructions'] = array(
 		'#type' => 'markup',
-		'#markup' => 'Please submit your themes in XML or ICLS format and properly named. I’ve received too many .jar files with around 20 themes inside and none of them have the name of the theme submitted. Thanks!'
+		'#markup' => '<p>Please submit your themes in ICLS format and properly named. I’ve received too many .jar
+			files with around 20 themes inside and none of them have the name of the theme submitted.</p>
+			<p>You must upload 3 screenshots with your theme.</p>
+			<p>Thanks!</p>'
+	);
+	$form['fieldset']['title'] = array(
+		'#type' => 'textfield',
+		'#title' => "Theme Name",
+		'#description' => ''
 	);
 	$form['fieldset']['author'] = array(
 		'#type' => 'textfield',
@@ -54,7 +64,6 @@ function phpstormthemes_upload() {
 	$form['fieldset2']['file'] = array(
 		'#type' => 'file',
 		'#title' => 'Theme File',
-		'#name' => 'theme_file',
 		'#description' => 'The theme file in ICLS or XML format'
 	);
 	$form['fieldset2']['screen1'] = array(
@@ -80,10 +89,149 @@ function phpstormthemes_upload() {
 
 }
 
+// Implements hook_form_validate()
 function phpstormthemes_upload_validate($form, &$form_state) {
-	form_set_error('screen2', t('No file was uploaded.'));
+//	if ($form_state['values']);
+//	form_set_error('screen2', t('No file was uploaded.'));
+	// handling upload for the theme file.
+	$file = file_save_upload('file', array(
+		'file_validate_extensions' => array('xml jpg icl')
+	), 'public://');
+
+	// Uploading the file.
+	if ($file) {
+		if ($file = file_move($file, 'public://')) {
+			$form_state['storage']['file'] = $file;
+		} else {
+			form_set_error('file', t('Failed to write the uploaded file the site\'s file folder.'));
+		}
+	} else {
+		form_set_error('file', t('No file was uploaded.'));
+	}
+
+	// Uploading screens
+	$file = file_save_upload('screen1', array('file_validate_extensions' => array('jpeg JPG jpg') ), 'public://');
+	if ($file) {
+		if ($file = file_move($file, 'public://')) {
+			$form_state['storage']['screen1'] = $file;
+		} else {
+			form_set_error('screen1', t('Failed to write the uploaded file the site\'s file folder.'));
+		}
+	} else {
+		form_set_error('screen1', t('No file was uploaded.'));
+	}
+
+	$file = file_save_upload('screen2', array('file_validate_extensions' => array('jpeg JPG jpg') ), 'public://');
+	if ($file) {
+		if ($file = file_move($file, 'public://')) {
+			$form_state['storage']['screen2'] = $file;
+		} else {
+			form_set_error('screen2', t('Failed to write the uploaded file the site\'s file folder.'));
+		}
+	} else {
+		form_set_error('screen2', t('No file was uploaded.'));
+	}
+
+	$file = file_save_upload('screen3', array('file_validate_extensions' => array('jpeg JPG jpg') ), 'public://');
+	if ($file) {
+		if ($file = file_move($file, 'public://')) {
+			$form_state['storage']['screen3'] = $file;
+		} else {
+			form_set_error('screen3', t('Failed to write the uploaded file the site\'s file folder.'));
+		}
+	} else {
+		form_set_error('screen3', t('No file was uploaded.'));
+	}
 }
 
+// Implements hook_form_submit()
 function phpstormthemes_upload_submit($form, &$form_state) {
 
+	error_log(print_r($_FILES, true));
+	$node = new stdClass();
+
+	$node->title = $form_state['values']['title'];
+
+	$node->language = LANGUAGE_NONE;
+	$node->type = 'pstorm_theme';
+	$node->uid = 1;
+	$node->status = 0;
+
+	$node->body[LANGUAGE_NONE][]['value'] = $form_state['values']['description'];
+	$node->body[LANGUAGE_NONE][]['summary'] = $form_state['values']['description'];
+	$node->body[LANGUAGE_NONE][]['format'] = 'plain_text';
+
+	$node->field_author_name[LANGUAGE_NONE][]['value'] = $form_state['values']['author'];
+	$node->field_author_name[LANGUAGE_NONE][]['safe_value'] = $form_state['values']['author'];
+
+	$node->field_author_url[LANGUAGE_NONE][]['value'] = $form_state['values']['author_url'];
+	$node->field_author_url[LANGUAGE_NONE][]['safe_value'] = $form_state['values']['author_url'];
+
+
+	// Files!
+	$file = $form_state['storage']['file'];
+	$node->field_theme_file[LANGUAGE_NONE][] = array(
+		'fid' => $file->fid,
+		'display' => 1,
+		'description' => '',
+	);
+	unset($form_state['storage']['file']);
+	$file->status = FILE_STATUS_PERMANENT;
+	file_save($file);
+
+	$file = $form_state['storage']['screen1'];
+	$node->field_screenshots[LANGUAGE_NONE][] = array(
+		'fid' => $file->fid,
+		'display' => 1,
+		'description' => '',
+	);
+	unset($form_state['storage']['screen1']);
+	$file->status = FILE_STATUS_PERMANENT;
+	file_save($file);
+
+	$file = $form_state['storage']['screen2'];
+	$node->field_screenshots[LANGUAGE_NONE][] = array(
+		'fid' => $file->fid,
+		'display' => 1,
+		'description' => '',
+	);
+	unset($form_state['storage']['screen2']);
+	$file->status = FILE_STATUS_PERMANENT;
+	file_save($file);
+
+	$file = $form_state['storage']['screen3'];
+	$node->field_screenshots[LANGUAGE_NONE][] = array(
+		'fid' => $file->fid,
+		'display' => 1,
+		'description' => '',
+	);
+	unset($form_state['storage']['screen3']);
+	$file->status = FILE_STATUS_PERMANENT;
+	file_save($file);
+
+	drupal_set_message('Thanks for submitting a theme. If all the requirements are correct, it will be up shortly.');
+
+	node_save($node);
+
 }
+
+/**
+ * Implements hook_mollom_form_list().
+ */
+function phpstormthemes_mollom_form_list() {
+	$forms['phpstormthemes-upload'] = array(
+		'title' => t('Upload theme'),
+	);
+	return $forms;
+}
+/**
+ * Implements hook_mollom_form_info().
+ */
+function phpstormthemes_mollom_form_info() {
+	$form_info = array(
+		'mode' => MOLLOM_MODE_CAPTCHA,
+	);
+	return $form_info;
+}
+
+

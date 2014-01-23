@@ -6,7 +6,10 @@
 body {
     background: #d5d5d5;
     padding-top: 20px !important;
-    font: 14px/150% 'Raleway', Arial, "Helvetica Neue";
+    font: 14px/150% 'Helvetica', Arial, "Helvetica Neue";
+}
+h1, h2, h3, h4 {
+	font-family: 'Raleway', Arial, "Helvetica Neue";
 }
 body.toolbar-drawer {
     /*padding-top: 49px !important;*/
@@ -17,7 +20,7 @@ body.toolbar-drawer {
 }
 a { color: #b939d3; }
 
-.main-container, .header-container { max-width: 940px; }
+.main-container, .header-container { max-width: 1050px; }
 
 .view-themes .views-row {
     background: #FFF;
@@ -80,9 +83,17 @@ a { color: #b939d3; }
 .node-pstorm-theme.view-mode-full .field-name-field-screenshots .field-item img {
 	max-width: none;
 }
-.node-pstorm-theme.view-mode-full .field-name-body {
-	padding: 25px;
+.node-pstorm-theme.view-mode-full .field-name-body,
+.node-pstorm-theme.view-mode-full .field-name-field-author-name,
+.node-pstorm-theme.view-mode-full .field-name-field-author-url {
+	padding: 10px 25px;
 }
+.node-pstorm-theme.view-mode-full .field-label { font-size: 1.1em; }
+
 .node-pstorm-theme .group-right {
 	padding-top: 25px;
+}
+
+.views-row .ad {
+	padding-top: 29px;
 }
